@@ -24,7 +24,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Autofac;
 using Autofac.Multitenant;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Microsoft.AspNetCore.Hosting
 {
@@ -44,7 +46,7 @@ namespace Microsoft.AspNetCore.Hosting
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="builder" /> or <paramref name="multitenantContainerAccessor" /> is <see langword="null" />.
         /// </exception>
-        public static IWebHostBuilder UseAutofacMultitenantRequestServices(this IWebHostBuilder builder, Func<MultitenantContainer> multitenantContainerAccessor)
+        public static IWebHostBuilder UseAutofacMultitenantRequestServices(this IWebHostBuilder builder, Func<IContainer, MultitenantContainer> multitenantContainerAccessor)
         {
             if (builder == null)
             {

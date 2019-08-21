@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Integration.AspNetCore.Multitenant", "src\Autofac.Integration.AspNetCore.Multitenant\Autofac.Integration.AspNetCore.Multitenant.csproj", "{241CD558-86C8-493B-9FA1-D913167D527C}"
 EndProject
@@ -11,9 +11,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
+		.gitignore = .gitignore
+		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "samples\Sandbox\Sandbox.csproj", "{12445470-D348-467F-8D3F-FBD6EF525CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "samples\Sandbox\Sandbox.csproj", "{12445470-D348-467F-8D3F-FBD6EF525CEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B30B80E6-B4BD-4646-918C-3690C342AEF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{448D7B1B-0651-404A-B944-A0FEFF9516BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EE5ED179-4059-48D4-9102-C879EFED9025}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +44,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{241CD558-86C8-493B-9FA1-D913167D527C} = {B30B80E6-B4BD-4646-918C-3690C342AEF1}
+		{BA923A91-3A4B-40CE-8788-70A641694945} = {EE5ED179-4059-48D4-9102-C879EFED9025}
+		{12445470-D348-467F-8D3F-FBD6EF525CEE} = {448D7B1B-0651-404A-B944-A0FEFF9516BC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE59A97B-9473-45BB-BE36-DEA80679E68E}
 	EndGlobalSection
 EndGlobal

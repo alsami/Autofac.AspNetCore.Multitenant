@@ -24,8 +24,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using Autofac.Integration.AspNetCore.Multitenant;
+using Autofac;
 using Autofac.Multitenant;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,7 +48,7 @@ namespace Microsoft.AspNetCore.Hosting
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="services" /> or <paramref name="multitenantContainerAccessor" /> is <see langword="null" />.
         /// </exception>
-        public static IServiceCollection AddAutofacMultitenantRequestServices(this IServiceCollection services, Func<MultitenantContainer> multitenantContainerAccessor)
+        public static IServiceCollection AddAutofacMultitenantRequestServices(this IServiceCollection services, Func<IContainer, MultitenantContainer> multitenantContainerAccessor)
         {
             if (services == null)
             {

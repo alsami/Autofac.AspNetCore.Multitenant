@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Integration.AspNetCore.Multitenant;
 using Autofac.Multitenant;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Autofac.Integration.AspNetCore.Multitenant
+namespace Microsoft.AspNetCore.Hosting
 {
     /// <summary>
     /// Middleware that forces the request lifetime scope to be created from the multitenant container
@@ -16,20 +17,24 @@ namespace Autofac.Integration.AspNetCore.Multitenant
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        private readonly Func<MultitenantContainer> _multitenantContainerAccessor;
+        private readonly Func<IContainer, MultitenantContainer> _multitenantContainerAccessor;
 
         private readonly RequestDelegate _next;
+
+        private readonly IContainer _container;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MultitenantRequestServicesMiddleware"/> class.
         /// </summary>
         /// <param name="next">The next step in the request pipeline.</param>
         /// <param name="multitenantContainerAccessor">A function that will access the multitenant container from which request lifetimes should be generated.</param>
+        /// <param name="container">The root container build using <see cref="ContainerBuilder"/>.</param>
         /// <param name="contextAccessor">The <see cref="IHttpContextAccessor"/> to set up with the current request context.</param>
-        public MultitenantRequestServicesMiddleware(RequestDelegate next, Func<MultitenantContainer> multitenantContainerAccessor, IHttpContextAccessor contextAccessor)
+        public MultitenantRequestServicesMiddleware(RequestDelegate next, Func<IContainer, MultitenantContainer> multitenantContainerAccessor, IContainer container, IHttpContextAccessor contextAccessor)
         {
             this._next = next;
             this._multitenantContainerAccessor = multitenantContainerAccessor;
+            this._container = container;
             this._contextAccessor = contextAccessor;
         }
 
@@ -52,8 +57,10 @@ namespace Autofac.Integration.AspNetCore.Multitenant
                 this._contextAccessor.HttpContext = context;
             }
 
-            var container = this._multitenantContainerAccessor();
-            if (container == null)
+            var multitenantContainer =
+                this._multitenantContainerAccessor(_container);
+
+            if (multitenantContainer == null)
             {
                 throw new InvalidOperationException(Properties.Resources.NoMultitenantContainerAvailable);
             }
@@ -61,9 +68,10 @@ namespace Autofac.Integration.AspNetCore.Multitenant
             IServiceProvidersFeature existingFeature = null;
             try
             {
-                var autofacFeature = RequestServicesFeatureFactory.CreateFeature(context, container.Resolve<IServiceScopeFactory>());
-                var disp = autofacFeature as IDisposable;
-                if (disp != null)
+                var autofacFeature =
+                    RequestServicesFeatureFactory.CreateFeature(context, multitenantContainer.Resolve<IServiceScopeFactory>());
+
+                if (autofacFeature is IDisposable disp)
                 {
                     context.Response.RegisterForDispose(disp);
                 }
@@ -75,7 +83,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant
             finally
             {
                 // In ASP.NET Core 1.x the existing feature will disposed as part of
-                // a using statement; in ASP.NET Core 2.x it is registered directly
+                // a using statement; in ASP.NET Core 2.x and ASP.NET Core 3.x, it is registered directly
                 // with the response for disposal. In either case, we don't have to
                 // do that. We do put back any existing feature, though, since
                 // at this point there may have been some default tenant or base

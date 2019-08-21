@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Autofac.Integration.AspNetCore.Multitenant.Properties {
+namespace Properties {
     using System;
     using System.Reflection;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -24,15 +24,15 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Properties {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -60,7 +60,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Properties {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The multitenant container accessor didn&apos;t provide a multitenant container. Check your UseAutofacMultitenantRequestServices method call to ensure the container accessor is correctly set up..
         /// </summary>
@@ -69,7 +69,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Properties {
                 return ResourceManager.GetString("NoMultitenantContainerAvailable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unable to find a RequestServicesFeature constructor that is supported..
         /// </summary>

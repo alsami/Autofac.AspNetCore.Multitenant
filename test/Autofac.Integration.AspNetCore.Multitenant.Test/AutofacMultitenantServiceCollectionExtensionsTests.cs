@@ -16,7 +16,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
             var services = new ServiceCollection();
 
             var mtc = new MultitenantContainer(Mock.Of<ITenantIdentificationStrategy>(), new ContainerBuilder().Build());
-            services.AddAutofacMultitenantRequestServices(() => mtc);
+            services.AddAutofacMultitenantRequestServices(_ => mtc);
 
             var serviceProvider = services.BuildServiceProvider();
             var accessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
@@ -30,7 +30,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
             var services = new ServiceCollection();
 
             var mtc = new MultitenantContainer(Mock.Of<ITenantIdentificationStrategy>(), new ContainerBuilder().Build());
-            services.AddAutofacMultitenantRequestServices(() => mtc);
+            services.AddAutofacMultitenantRequestServices(_ => mtc);
 
             var serviceProvider = services.BuildServiceProvider();
             var filter = serviceProvider.GetRequiredService<IStartupFilter>();
@@ -42,7 +42,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
         public void AddAutofacMultitenantRequestServices_NullBuilder()
         {
             var mtc = new MultitenantContainer(Mock.Of<ITenantIdentificationStrategy>(), new ContainerBuilder().Build());
-            Assert.Throws<ArgumentNullException>(() => AutofacMultitenantServiceCollectionExtensions.AddAutofacMultitenantRequestServices(null, () => mtc));
+            Assert.Throws<ArgumentNullException>(() => AutofacMultitenantServiceCollectionExtensions.AddAutofacMultitenantRequestServices(null, _ => mtc));
         }
 
         [Fact]

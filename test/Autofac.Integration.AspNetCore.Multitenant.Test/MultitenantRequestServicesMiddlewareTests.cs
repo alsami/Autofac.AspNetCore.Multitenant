@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Multitenant;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +18,11 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
         {
             var accessor = Mock.Of<IHttpContextAccessor>();
             accessor.HttpContext = new DefaultHttpContext();
-            var mtc = CreateContainer();
+            var container = CreateContainer();
             var next = new RequestDelegate(ctx => Task.FromResult(0));
             var context = CreateContext();
 
-            var mw = new MultitenantRequestServicesMiddleware(next, () => mtc, accessor);
+            var mw = new MultitenantRequestServicesMiddleware(next, CreateMultiTenantContainer, container, accessor);
             await mw.Invoke(context);
             Assert.NotSame(context, accessor.HttpContext);
         }
@@ -30,10 +31,11 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
         public async Task Invoke_NoMultitenantContainer()
         {
             var accessor = Mock.Of<IHttpContextAccessor>();
+            var container = CreateContainer();
             var next = new RequestDelegate(ctx => Task.FromResult(0));
             var context = CreateContext();
 
-            var mw = new MultitenantRequestServicesMiddleware(next, () => null, accessor);
+            var mw = new MultitenantRequestServicesMiddleware(next, _ => null, container, accessor);
             await Assert.ThrowsAsync<InvalidOperationException>(() => mw.Invoke(context));
         }
 
@@ -41,7 +43,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
         public async Task Invoke_ReplacesRequestServices()
         {
             var accessor = Mock.Of<IHttpContextAccessor>();
-            var mtc = CreateContainer();
+            var container = CreateContainer();
             var originalFeature = Mock.Of<IServiceProvidersFeature>();
             var next = new RequestDelegate(ctx =>
             {
@@ -54,7 +56,7 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
             var context = CreateContext();
             context.Features.Set<IServiceProvidersFeature>(originalFeature);
 
-            var mw = new MultitenantRequestServicesMiddleware(next, () => mtc, accessor);
+            var mw = new MultitenantRequestServicesMiddleware(next, CreateMultiTenantContainer, container, accessor);
             await mw.Invoke(context);
 
             // The original request services feature should have been replaced
@@ -67,22 +69,25 @@ namespace Autofac.Integration.AspNetCore.Multitenant.Test
         public async Task Invoke_SetsHttpContextOnAccessor()
         {
             var accessor = Mock.Of<IHttpContextAccessor>();
-            var mtc = CreateContainer();
+            var container = CreateContainer();
             var next = new RequestDelegate(ctx => Task.FromResult(0));
             var context = CreateContext();
 
-            var mw = new MultitenantRequestServicesMiddleware(next, () => mtc, accessor);
+            var mw = new MultitenantRequestServicesMiddleware(next, CreateMultiTenantContainer, container, accessor);
             await mw.Invoke(context);
             Assert.Same(context, accessor.HttpContext);
         }
 
-        private static MultitenantContainer CreateContainer()
+        private static IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
             builder.Populate(new ServiceCollection());
-            var mtc = new MultitenantContainer(Mock.Of<ITenantIdentificationStrategy>(), builder.Build());
-            return mtc;
+
+            return builder.Build();
         }
+
+        private static MultitenantContainer CreateMultiTenantContainer(IContainer container)
+            => new MultitenantContainer(Mock.Of<ITenantIdentificationStrategy>(), container);
 
         private static DefaultHttpContext CreateContext()
         {
